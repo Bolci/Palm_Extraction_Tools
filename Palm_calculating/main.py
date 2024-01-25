@@ -1,14 +1,12 @@
 import os
-import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image
 
 from palm_calculator import PalmCalculator
 from rsi_inferencer import RSI_inferencer
 from segmented_procesor import SegmentedProcesor
 from vectorizer import Vectorizer
-from utils import get_rsi_image, load_rgb_image, get_printable_rsi, merge_img_mask, colour_img_new
+from utils import get_rsi_image, get_printable_rsi, colour_img_new
 
 path_mask = '/media/bolci/Extreme SSD/Multispectral data/ann_dir/test'
 path_img = '/media/bolci_ssd/Fujirah Project/palm_calculating/Enhanced'

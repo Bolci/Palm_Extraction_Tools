@@ -7,7 +7,8 @@ class SegmentedProcesor:
     def __init__(self):
         pass
 
-    def find_object_boundaries(self, image):
+    @staticmethod
+    def find_object_boundaries(image: np.array):
         # Find unique indexes (objects) in the image
         unique_objects = np.unique(image)
 
@@ -28,7 +29,8 @@ class SegmentedProcesor:
 
         return object_boundaries
 
-    def assign_point_to_cluster_number(self, instance_segmented_img, points):
+    @staticmethod
+    def assign_point_to_cluster_number(instance_segmented_img, points):
         results = {}
 
         for single_point_coordinates in points:
@@ -37,7 +39,8 @@ class SegmentedProcesor:
 
         return results
 
-    def draw_and_boundaries(self, original_image, boundaries):
+    @staticmethod
+    def draw_and_boundaries(original_image, boundaries):
         # original_image = original_image.astype(np.uint8)
         # Convert to a color image if it's grayscale
         if len(original_image.shape) == 2 or original_image.shape[2] == 1:
@@ -52,7 +55,8 @@ class SegmentedProcesor:
 
         return cv2.cvtColor(colored_image, cv2.COLOR_BGR2RGB)
 
-    def draw_circle(self, instance_segmented_img, points):
+    @staticmethod
+    def draw_circle(instance_segmented_img, points):
         zero_img = np.zeros(instance_segmented_img.shape).astype(np.uint8)
         colored_image = cv2.cvtColor(zero_img, cv2.COLOR_GRAY2BGR)
 
@@ -70,7 +74,7 @@ class SegmentedProcesor:
 
         return colored_image
 
-    def process(self, instance_segmented_img, points):
+    def process(self, instance_segmented_img, points) -> tuple:
         instance_segmented_img = copy(instance_segmented_img)
         points = copy(points)
 

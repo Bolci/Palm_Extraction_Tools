@@ -3,7 +3,9 @@ import numpy as np
 
 
 class RSI_inferencer:
-    def write_geotiff(self, out, raster_file, output_file):
+
+    @staticmethod
+    def write_geotiff(out: np.array, raster_file: str, output_file: str) -> None:
         """Writes a georeferenced TIFF file using the output from the segmentation model.
 
         Args:

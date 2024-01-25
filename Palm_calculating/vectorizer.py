@@ -5,15 +5,17 @@ import geopandas as gpd
 from skimage.measure import find_contours as fc
 import numpy as np
 
+
 class Vectorizer:
     """
     This class is used for vectorizing predicted segmentation masks
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.shape_type = {'Polygon': Polygon, 'LinearRing': LinearRing}
 
-    def _load_image(self, image_name: str) -> tuple:
+    @staticmethod
+    def _load_image( image_name: str) -> tuple:
         """Loads an image using rasterio and retrieves its transform and CRS (Coordinate Reference System).
 
         Args:
@@ -29,7 +31,8 @@ class Vectorizer:
 
         return image, transform, crs
 
-    def _apply_transforms(self, all_cons, transform, shape_type) -> list:
+    @staticmethod
+    def _apply_transforms(all_cons, transform, shape_type) -> list:
         """Applies affine transformations to contours.
 
         Args:
@@ -47,7 +50,8 @@ class Vectorizer:
 
         return geoms_transformed
 
-    def get_geopandas(self, crs, input_geom):
+    @staticmethod
+    def get_geopandas(crs, input_geom) -> gpd.GeoDataFrame:
         """Creates a GeoDataFrame from geometries and a specified CRS.
 
         Args:
@@ -60,7 +64,8 @@ class Vectorizer:
 
         return gpd.GeoDataFrame(crs=crs, geometry=input_geom)
 
-    def _save_polygons(self, gdf, output_file: str):
+    @staticmethod
+    def _save_polygons(gdf: gpd.GeoDataFrame, output_file: str) -> None:
         """Saves a GeoDataFrame of polygons to a GeoJSON file.
 
         Args:
@@ -69,7 +74,8 @@ class Vectorizer:
         """
         gdf.to_file(output_file, driver='GeoJSON')
 
-    def _indentify_inner_polygons(self, gdf):
+    @staticmethod
+    def _indentify_inner_polygons( gdf: gpd.GeoDataFrame) -> tuple:
         """Identifies inner polygons within a GeoDataFrame.
 
         Args:
@@ -92,7 +98,7 @@ class Vectorizer:
 
         return gdf, gdf_inner_polygons
 
-    def clean_inner_polygons(self, gdf):
+    def clean_inner_polygons(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """Removes inner polygons from a GeoDataFrame by performing a geometric difference operation.
 
         Args:
@@ -101,7 +107,6 @@ class Vectorizer:
         Returns:
             GeoDataFrame: A cleaned GeoDataFrame with inner polygons removed.
         """
-
         gdf, innver_poly = self._indentify_inner_polygons(gdf)
 
         combined_geometry = gdf.unary_union
@@ -112,12 +117,17 @@ class Vectorizer:
 
         return gdf
 
-    def get_polygons(self, image_name, predicted_mask, output_path='output.geojson', threshold: float = 0.5,
-                     shape_type='Polygon'):
+    def get_polygons(self,
+                     image_name: str,
+                     predicted_mask: np.array,
+                     output_path: str = 'output.geojson',
+                     threshold: float = 0.5,
+                     shape_type: str = 'Polygon'):
         """Converts an image to polygons, cleans the polygons, and saves them to a GeoJSON file.
 
         Args:
             image_name (str): The file path of the image to convert.
+            predicted_mask (np.array): predicted mask from segmentation model
             output_path (str, optional): The file path where the GeoJSON will be saved. Defaults to 'output.geojson'.
             threshold (float, optional): The threshold to use when identifying contours. Defaults to 0.5.
         """

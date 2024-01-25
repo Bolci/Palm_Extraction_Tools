@@ -1,6 +1,6 @@
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 from scipy.ndimage.filters import maximum_filter
-from mmseg.apis import init_model, inference_model, show_result_pyplot
+from mmseg.apis import init_model, inference_model
 from mmengine import Config
 from copy import copy
 import cv2
@@ -13,7 +13,8 @@ class PalmCalculator:
     def __init__(self, ):
         self.model = None
 
-    def detect_peaks(self, image):
+    @staticmethod
+    def detect_peaks(image):
         neighborhood = generate_binary_structure(2, 2)
         local_max = maximum_filter(image, footprint=neighborhood) == image
         background = (image == 0)
@@ -27,7 +28,7 @@ class PalmCalculator:
         self.model = init_model(config_loaded, checkpoint_path, device=device)
 
     @torch.no_grad()
-    def inference(self, img_loaded, class_id=1):
+    def inference(self, img_loaded, class_id=1) -> tuple:
         # img_loaded = torch.tensor(img_loaded)
         result = inference_model(self.model, img_loaded)
         class_map = result.pred_sem_seg.data[0].detach().cpu().numpy()
@@ -35,7 +36,8 @@ class PalmCalculator:
 
         return class_map, logits_map[1]
 
-    def threshold_logits(self, logits_map, threshold=0):
+    @staticmethod
+    def threshold_logits(logits_map, threshold=0):
         log_min_max = copy(logits_map)
         log_min_max[logits_map <= threshold] = 0
         return log_min_max
@@ -55,16 +57,19 @@ class PalmCalculator:
         n_of_clusters = len(np.where(peaks)[0])
         return n_of_clusters
 
-    def calculate_distance_from_points(self, img_coord, point):
+    @staticmethod
+    def calculate_distance_from_points(img_coord, point):
         new_coord = copy(img_coord)
         new_point = copy(point)
         return np.sqrt(np.sum(np.power(new_coord - new_point, 2), axis=1))
 
-    def assign_to_cluster(self, distances):
+    @staticmethod
+    def assign_to_cluster(distances):
         dist = copy(distances)
         return np.argmin(dist, axis=0)
 
-    def draw_points(self, new_img, i, j):
+    @staticmethod
+    def draw_points(new_img, i, j):
         n_of_clusters = len(i)
         for x_cluster in range(n_of_clusters):
             point_cluster = np.asarray([i[x_cluster], j[x_cluster]])
@@ -86,7 +91,6 @@ class PalmCalculator:
 
         n_of_clusters = len(j)
         print(n_of_clusters)
-        #j, i = np.where(peaks)
 
         peaks_coordinates = np.concatenate((j.reshape((1,) + j.shape), i.reshape((1,) + i.shape)), axis=0).T
 
@@ -120,7 +124,6 @@ class PalmCalculator:
         for x_coord, coordinates in enumerate(cat_coord):
             colo = all_colours[asigned[x_coord]]
             segmented_img[coordinates[0]][coordinates[1]] = colo
-
 
         n_of_clusters = len(np.unique(segmented_img)) - 1
 
