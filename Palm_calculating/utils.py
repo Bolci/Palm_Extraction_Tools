@@ -5,13 +5,6 @@ from copy import copy
 import cv2
 
 
-def get_rsi_image(image_path):
-    data = gdal.Open(image_path)
-    band = data.ReadAsArray().astype(np.float32)
-    # print(band)
-    return band.transpose((1, 2, 0))
-
-
 def load_rgb_image(image_path):
     img = mmcv.imread(image_path)
     return img

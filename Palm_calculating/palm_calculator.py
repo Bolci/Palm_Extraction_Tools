@@ -5,7 +5,6 @@ from mmengine import Config
 from copy import copy
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 import torch
 
 
@@ -83,9 +82,6 @@ class PalmCalculator:
         j, i = np.where((class_map == peaks) & (class_map == 1))
         new_peak_map = np.zeros(class_map.shape)
         new_peak_map[j, i] = 1
-
-        plt.figure()
-        plt.imshow(new_peak_map)
 
         n_of_clusters = len(j)
 
