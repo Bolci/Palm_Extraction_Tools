@@ -29,7 +29,6 @@ class PalmCalculator:
 
     @torch.no_grad()
     def inference(self, img_loaded, class_id=1) -> tuple:
-        # img_loaded = torch.tensor(img_loaded)
         result = inference_model(self.model, img_loaded)
         class_map = result.pred_sem_seg.data[0].detach().cpu().numpy()
         logits_map = result.seg_logits.data.detach().cpu().numpy()
@@ -44,7 +43,6 @@ class PalmCalculator:
 
     def get_peaks(self, logits_map):
         blured_img = cv2.GaussianBlur(logits_map, (5, 5), 0)
-        blured_img_mask = blured_img.astype(bool)
         peaks = self.detect_peaks(blured_img)
 
         return peaks
@@ -90,7 +88,6 @@ class PalmCalculator:
         plt.imshow(new_peak_map)
 
         n_of_clusters = len(j)
-        print(n_of_clusters)
 
         peaks_coordinates = np.concatenate((j.reshape((1,) + j.shape), i.reshape((1,) + i.shape)), axis=0).T
 

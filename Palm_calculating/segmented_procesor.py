@@ -4,33 +4,39 @@ from copy import copy
 
 
 class SegmentedProcesor:
-    def __init__(self):
+    """
+       A class for processing segmented images. Provides functionalities to find object boundaries,
+       assign points to clusters, draw boundaries, and draw circles around objects.
+       """
+    def __init__(self) -> None:
         pass
 
     @staticmethod
-    def find_object_boundaries(image: np.array):
-        # Find unique indexes (objects) in the image
+    def find_object_boundaries(image: np.array) -> dict:
+        """
+        Finds and returns the boundaries of unique objects (trees) in a given image.
+
+        Parameters:
+        image (np.array): A segmented image where each object (tree) is represented by a unique value
+        Returns:
+        dict: A dictionary where keys are object values, and values are contours of the objects.
+        """
+
         unique_objects = np.unique(image)
-
-        # Skip the background if it's indexed as 0
         unique_objects = unique_objects[unique_objects != 0]
-
         object_boundaries = {}
 
         for obj in unique_objects:
-            # Create a mask for the current object
             mask = np.where(image == obj, 255, 0).astype(np.uint8)
-
-            # Find contours (boundaries) of the object
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-            # You might have multiple contours if the object has holes
             object_boundaries[obj] = contours
 
         return object_boundaries
 
     @staticmethod
     def assign_point_to_cluster_number(instance_segmented_img, points):
+        
+
         results = {}
 
         for single_point_coordinates in points:
