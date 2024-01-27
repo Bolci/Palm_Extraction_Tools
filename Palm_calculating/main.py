@@ -31,11 +31,11 @@ def main():
 
         (segmented_img, logits,
          point_img, n_of_clusters,
-         peaks_coordinates) = palm_calculator.segment_palms(loaded_rsi_img, img_path)
+         peaks_coordinates) = palm_calculator.segment_palms(loaded_rsi_img)
 
         print(f'--- processing number of trees is {n_of_clusters}---')
 
-        class_map, _ = palm_calculator.inference(loaded_rsi_img, img_path)
+        class_map, _ = palm_calculator.inference(loaded_rsi_img)
         circle_img, raster_drawn, coloured_segmented = segmenter_processor.process(segmented_img, peaks_coordinates)
 
         point_img = point_img.astype(np.uint8)

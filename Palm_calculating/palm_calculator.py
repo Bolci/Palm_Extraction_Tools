@@ -48,7 +48,6 @@ class PalmCalculator:
         :param class_id: The class ID to be considered for segmentation. Default is 1.
         :return: A tuple containing the class map and logits map.
         """
-
         result = inference_model(self.model, img_loaded)
         class_map = result.pred_sem_seg.data[0].detach().cpu().numpy()
         logits_map = result.seg_logits.data.detach().cpu().numpy()
@@ -134,7 +133,7 @@ class PalmCalculator:
             new_img = cv2.circle(new_img, point_cluster, radius=4, color=(255), thickness=-1)
         return new_img
 
-    def segment_palms(self, loaded_img: np.array, image_path: str) -> tuple:
+    def segment_palms(self, loaded_img: np.array) -> tuple:
         """
         Segment palm trees in an image and calculate their coordinates.
 
@@ -142,7 +141,7 @@ class PalmCalculator:
         :param image_path: Path to the input image.
         :return: Tuple with segmented image, logits, point image, number of clusters, and peaks coordinates.
         """
-        class_map, logits = self.inference(loaded_img, image_path)
+        class_map, logits = self.inference(loaded_img)
         log_min_max = self.threshold_logits(logits)
         peaks = self.get_peaks(log_min_max)
 
