@@ -34,7 +34,17 @@ class SegmentedProcesor:
         return object_boundaries
 
     @staticmethod
-    def assign_point_to_cluster_number(instance_segmented_img, points):
+    def assign_point_to_cluster_number(instance_segmented_img: np.array, points: np.array) -> dict:
+        """
+        Assigns each point to a cluster number based on its coordinates in the segmented image.
+
+        Parameters:
+        instance_segmented_img (np.array): The segmented image array.
+        points (list): List of point coordinates.
+
+        Returns:
+        dict: Dictionary mapping cluster numbers to point coordinates.
+        """
         results = {}
 
         for single_point_coordinates in points:
@@ -45,10 +55,25 @@ class SegmentedProcesor:
 
     @staticmethod
     def get_colour() -> np.array:
+        """
+        Generates a random color.
+
+        Returns:
+        np.array: An array representing a random color.
+        """
         return np.random.randint(0, 255, size=3).tolist()
 
     @staticmethod
     def convert_image_to_coloured(image: np.array) -> np.array:
+        """
+        Converts a grayscale or single-channel image to a colored (BGR) image.
+
+        Parameters:
+        image (np.array): Input image array.
+
+        Returns:
+        np.array: Colored image array.
+        """
         if len(image.shape) == 2 or image.shape[2] == 1:
             colored_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
         else:
@@ -56,7 +81,17 @@ class SegmentedProcesor:
         return colored_image
 
     @staticmethod
-    def draw_and_boundaries(original_image, boundaries):
+    def draw_and_boundaries(original_image: np.array, boundaries: dict) -> np.array:
+        """
+        Draws boundaries around each segmented object in the image.
+
+        Parameters:
+        original_image (np.array): The original image array.
+        boundaries (dict): Dictionary of object boundaries.
+
+        Returns:
+        np.array: Image array with drawn boundaries.
+        """
         colored_image = SegmentedProcesor.convert_image_to_coloured(original_image)
 
         for obj, contours in boundaries.items():
@@ -67,7 +102,17 @@ class SegmentedProcesor:
         return cv2.cvtColor(colored_image, cv2.COLOR_BGR2RGB)
 
     @staticmethod
-    def draw_circle(instance_segmented_img, points):
+    def draw_circle(instance_segmented_img: np.array, points: np.array) -> np.array:
+        """
+        Draws circles around each object based on the segmented image and provided points.
+
+        Parameters:
+        instance_segmented_img (np.array): The segmented image array.
+        points (list): List of point coordinates.
+
+        Returns:
+        np.array: Image array with drawn circles.
+        """
         zero_img = np.zeros(instance_segmented_img.shape).astype(np.uint8)
         colored_image = cv2.cvtColor(zero_img, cv2.COLOR_GRAY2BGR)
 
@@ -96,7 +141,7 @@ class SegmentedProcesor:
 
         return coloured
 
-    def process(self, instance_segmented_img, points) -> tuple:
+    def process(self, instance_segmented_img: np.array, points: np.array) -> tuple:
         instance_segmented_img = copy(instance_segmented_img)
         points = copy(points)
 

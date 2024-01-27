@@ -188,5 +188,3 @@ class PalmCalculator:
         n_of_clusters = len(np.unique(segmented_img)) - 1
 
         return segmented_img, logits, point_img, n_of_clusters, peaks_coordinates
-
-
