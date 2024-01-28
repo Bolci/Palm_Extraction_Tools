@@ -129,8 +129,8 @@ class Vectorizer:
         Args:
             image_name (str): The file path of the image to convert.
             predicted_mask (np.array): predicted mask from segmentation model
-            output_path (str, optional): The file path where the GeoJSON will be saved. Defaults to 'output.geojson'.
             threshold (float, optional): The threshold to use when identifying contours. Defaults to 0.5.
+            shape_type (str): The type of shape to create. Defaults to 'Polygon'.
         """
 
         image, transform, crs = self._load_image(image_name)
@@ -155,7 +155,19 @@ class Vectorizer:
                               predicted_mask: np.array,
                               output_path: str = './',
                               threshold: float = 0.5,
-                              shape_type: str = 'Polygon'):
+                              shape_type: str = 'Polygon') -> None:
+
+        """
+        Generates and saves polygons from a predicted mask into a GeoJSON file.
+
+        Parameters:
+        image_path (str): The path to the input image file.
+        image_name (str): The name of the input image file.
+        predicted_mask (np.array): The predicted mask array from the segmentation model.
+        output_path (str): The base directory where the GeoJSON file will be saved. Defaults to './'.
+        threshold (float): The threshold value to determine polygon boundaries. Defaults to 0.5.
+        shape_type (str): The type of shape to create. Defaults to 'Polygon'.
+        """
 
         file_name = clean_img_extension(image_name)
         saving_folder_path = os.path.join(output_path, 'Geopandas_files')
