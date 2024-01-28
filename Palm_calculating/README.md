@@ -3,10 +3,11 @@
 This folder contains Palm calculation algorithm described in paper:
 Spatial–spectral Transformer-based Semantic Segmentation for a City-level Surveying of Individual Date Palm Trees using Very-High-Resolution Satellite Data
 
-![alt text](http://url/to/img.png)
+![alt text](https://github.com/Bolci/Palm_Extraction_Tools/blob/main/Palm_calculating/img/palm_calculating.png)
 
 ## Requirements
 
+TODO
 
 ## Usage
 
