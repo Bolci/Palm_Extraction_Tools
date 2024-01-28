@@ -13,6 +13,7 @@ def parse_args():
         default='./',
         help='output path to save precited images')
     parser.add_argument('--georeference', action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument('--vectorize', action=argparse.BooleanOptionalAction, default=False)
 
     parser.add_argument('--local_rank', '--local-rank', type=int, default=0)
     args = parser.parse_args()

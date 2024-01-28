@@ -5,6 +5,7 @@ from geodata_worker import GeodataWorker
 from segmented_procesor import SegmentedProcesor
 from arg_parser import parse_args
 from saver import Saver
+from vectorizer import Vectorizer
 
 
 def main():
@@ -14,6 +15,7 @@ def main():
     checkpoint_path = args.checkpoint
     output_path = args.out
     is_georeferenced = args.georeference
+    is_vectorized = args.vectorize
 
     all_files_img = os.listdir(path_img)
     all_files_img = [x for x in all_files_img if 'tif' in x and 'tif.aux' not in x]
@@ -22,6 +24,11 @@ def main():
     segmenter_processor = SegmentedProcesor()
     palm_calculator = PalmCalculator()
     palm_calculator.set_model(config_path, checkpoint_path)
+    img_saver = Saver(output_path)
+    vectorizer = None
+
+    if is_vectorized:
+        vectorizer = Vectorizer()
 
     for id_img, img in enumerate(all_files_img):
         print(f'--- processing image {img}---')
@@ -49,8 +56,11 @@ def main():
         if is_georeferenced:
             data_to_save = GeodataWorker.corect_data_to_geotiff(data_to_save)
 
-        img_saver = Saver(output_path)
         img_saver.save(img, n_of_clusters, data_to_save, is_georeferenced=is_georeferenced)
+
+        if is_vectorized:
+            output_path = os.path.join(output_path, 'output.geojson')
+            vectorizer.get_and_safe_polygons(img_path, img, segmented_img)
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@ import os
 from PIL import Image
 import rasterio
 import numpy as np
+from utils import clean_img_extension, make_folders_if_not_exists
 
 
 class Saver:
@@ -22,26 +23,6 @@ class Saver:
 
         self.destination_folder = self.geofererenced_folder
         self.saving_function = self.save_georeferenced
-
-    @staticmethod
-    def clean_img_extension(img_name: str) -> str:
-        """
-        Remove the file extension from an image name.
-
-        :param img_name: The name of the image file.
-        :return: Image name without the extension.
-        """
-        return img_name[:-(len(img_name.split('.')[-1]) + 1)]
-
-    @staticmethod
-    def make_folders_if_not_exists(saving_path: str) -> None:
-        """
-        Create a folder if it does not exist.
-
-        :param saving_path: The path where the folder should be created.
-        """
-        if not os.path.exists(saving_path):
-            os.mkdir(saving_path)
 
     @staticmethod
     def save_img(img_to_save: np.array, path: str) -> None:
@@ -77,7 +58,7 @@ class Saver:
         :return: A list of paths for saving the images.
         """
         saving_path_full = os.path.join(self.saving_path, self.destination_folder)
-        self.make_folders_if_not_exists(saving_path_full)
+        make_folders_if_not_exists(saving_path_full)
         return [os.path.join(saving_path_full,  f"{image_name}_{x}_no_trees={n_trees}%s") for x in image_types]
 
     def save(self,
@@ -94,7 +75,7 @@ class Saver:
         :param is_georeferenced: Flag to indicate if the data is georeferenced.
         """
 
-        img_name = self.clean_img_extension(img_name)
+        img_name = clean_img_extension(img_name)
 
         if not is_georeferenced:
             self.destination_folder = self.inferenced_folder

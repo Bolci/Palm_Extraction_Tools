@@ -4,6 +4,8 @@ from shapely.affinity import affine_transform
 import geopandas as gpd
 from skimage.measure import find_contours as fc
 import numpy as np
+from utils import clean_img_extension, make_folders_if_not_exists
+import os
 
 
 class Vectorizer:
@@ -120,7 +122,6 @@ class Vectorizer:
     def get_polygons(self,
                      image_name: str,
                      predicted_mask: np.array,
-                     output_path: str = 'output.geojson',
                      threshold: float = 0.5,
                      shape_type: str = 'Polygon'):
         """Converts an image to polygons, cleans the polygons, and saves them to a GeoJSON file.
@@ -137,13 +138,30 @@ class Vectorizer:
         all_ids = np.unique(predicted_mask)
         all_ids = all_ids[all_ids != 0]
 
-        for id_object in all_ids:
-            j, i = np.where(predicted_mask == id_object)
-            zero_img = np.zeros(predicted_mask.shape)
-            zero_img[j, i] = 1
-            all_cons = fc(predicted_mask, threshold)
+        all_polygons = []
 
-        geoms_transformed = self._apply_transforms(all_cons, transform, self.shape_type[shape_type])
-        gdf = self.get_geopandas(crs, geoms_transformed)
+        for id_object in all_ids:
+            binary_mask = predicted_mask == id_object
+            all_cons = fc(binary_mask, threshold)
+            found_polygons = self._apply_transforms(all_cons, transform, self.shape_type[shape_type])
+            all_polygons += found_polygons
+        gdf = self.get_geopandas(crs, all_polygons)
         print('created geopandas')
-        self._save_polygons(gdf, output_path)
+        return gdf
+
+    def get_and_safe_polygons(self,
+                              image_path: str,
+                              image_name: str,
+                              predicted_mask: np.array,
+                              output_path: str = './',
+                              threshold: float = 0.5,
+                              shape_type: str = 'Polygon'):
+
+        file_name = clean_img_extension(image_name)
+        saving_folder_path = os.path.join(output_path, 'Geopandas_files')
+        make_folders_if_not_exists(saving_folder_path)
+        output_path_full = os.path.join(saving_folder_path,  f'{file_name}_polygons.geojson')
+
+        gdf_file = self.get_polygons(image_path, predicted_mask, threshold, shape_type)
+
+        self._save_polygons(gdf_file, output_path_full)
